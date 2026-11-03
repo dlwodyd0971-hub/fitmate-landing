@@ -266,6 +266,8 @@ h3{font-size:19px;letter-spacing:-.02em;font-weight:700}
 .day[aria-checked="true"]{background:var(--paper);box-shadow:0 0 0 2px var(--ink)}
 .day.done{background:var(--lime-2);color:var(--ink)}
 .day.pop{animation:pop 460ms var(--ease-spring)}
+.day.done.rest{background:var(--purple-soft);color:var(--purple-2)}
+.go .gain-pre.soft{color:#C9B8F5}
 .custom{margin-top:10px;width:100%;min-height:46px;border-radius:14px;border:0;background:var(--mute);padding:0 14px;font:inherit;font-size:16px;color:var(--ink);transition:box-shadow 180ms ease}
 .custom:focus{outline:none;box-shadow:inset 0 0 0 1.5px var(--purple)}
 .custom[hidden]{display:none}
@@ -549,8 +551,9 @@ footer p{max-width:46em}
             <button class="chip" type="button" role="radio" aria-checked="true" data-v="홈트">홈트</button>
             <button class="chip" type="button" role="radio" aria-checked="false" data-v="스트레칭">스트레칭</button>
             <button class="chip" type="button" role="radio" aria-checked="false" data-v="러닝">러닝</button>
-            <button class="chip" type="button" role="radio" aria-checked="false" data-v="계단">계단 오르기</button>
+            <button class="chip" type="button" role="radio" aria-checked="false" data-v="계단">계단</button>
             <button class="chip" type="button" role="radio" aria-checked="false" data-v="">직접 적기</button>
+            <button class="chip" type="button" role="radio" aria-checked="false" data-v="휴식">휴식</button>
           </div>
           <input class="custom" id="custom" type="text" maxlength="12" placeholder="예: 필라테스, 배드민턴" aria-label="한 운동 직접 적기" hidden>
         </div>
@@ -584,7 +587,7 @@ footer p{max-width:46em}
         <button class="reset" id="reset" type="button">처음부터 다시 키우기</button>
       </div>
     </div>
-    <p class="demo-note">체험용 예시예요. 경험치는 ‘출석 10 + 운동 시간(분) × 강도(가볍게 1, 적당히 1.5, 땀 흠뻑 2)’로 계산해요. 실제 규칙은 사용자 테스트를 거쳐 정해요.</p>
+    <p class="demo-note">체험용 예시예요. 경험치는 ‘출석 10 + 운동 시간(분) × 강도(가볍게 1, 적당히 1.5, 땀 흠뻑 2)’로 계산해요. 휴식한 날은 기록만 남고 출석 횟수와 경험치에는 들어가지 않아요. 실제 규칙은 사용자 테스트를 거쳐 정해요.</p>
   </div>
 </section>
 
@@ -762,14 +765,19 @@ let sel = todayIdx;
 const totalExp = () => [...done.values()].reduce((a, d) => a + d.exp, 0);
 const levelOf = exp => LV.reduce((lv, l, i) => exp >= l.need ? i : lv, 0);
 const what = () => pick.sport || custom.value.trim();
-const expNow = () => Math.round(10 + pick.min * pick.pow);
+const isRest = () => pick.sport === '휴식';
+const expNow = () => isRest() ? 0 : Math.round(10 + pick.min * pick.pow);
+const attended = () => [...done.values()].filter(d => !d.rest).length;   // 휴식은 출석 횟수에서 빠짐
 
 function radio(groupId, key, cast){
   $(groupId).addEventListener('click', e => {
     const b = e.target.closest('.chip'); if (!b) return;
     $(groupId).querySelectorAll('.chip').forEach(c => c.setAttribute('aria-checked', c === b));
     pick[key] = cast(b.dataset.v);
-    if (key === 'sport'){ custom.hidden = pick.sport !== ''; if (!custom.hidden) custom.focus(); }
+    if (key === 'sport'){
+      custom.hidden = pick.sport !== ''; if (!custom.hidden) custom.focus();
+      $('times').parentElement.hidden = $('pows').parentElement.hidden = isRest();
+    }
     render();
   });
 }
@@ -782,8 +790,9 @@ function render(){
   const exp = totalExp(), n = levelOf(exp), lv = LV[n], next = LV[n + 1];
   gm.style.setProperty('--s', lv.s);
   $('lvNum').textContent = `Lv.${n + 1}`; $('lvName').textContent = lv.name;
-  $('goal').textContent = done.size >= GOAL ? `주간 목표 달성 · ${done.size}회` : `주간 목표 ${done.size}/${GOAL}`;
-  $('ring').style.strokeDashoffset = RING * (1 - Math.min(done.size, GOAL) / GOAL);
+  const att = attended();
+  $('goal').textContent = att >= GOAL ? `주간 목표 달성 · ${att}회` : `주간 목표 ${att}/${GOAL}`;
+  $('ring').style.strokeDashoffset = RING * (1 - Math.min(att, GOAL) / GOAL);
   $('xpTxt').textContent = next ? `${exp} / ${next.need}` : `${exp} · MAX`;
   $('xpBar').style.transform = `scaleX(${next ? (exp - lv.need) / (next.need - lv.need) : 1})`;
   const owned = LV.slice(1, n + 1).map(l => l.acc).filter(Boolean);
@@ -794,14 +803,17 @@ function render(){
   dayEls.forEach((d, i) => {
     d.setAttribute('aria-checked', i === sel);
     d.classList.toggle('done', done.has(i));
+    d.classList.toggle('rest', !!done.get(i)?.rest);
     d.querySelector('em').textContent = done.get(i)?.what || '';
   });
   const isDone = done.has(sel), go = $('go');
   go.classList.toggle('undo', isDone);
   go.disabled = !isDone && !what();
   $('goIcon').setAttribute('href', isDone ? '#iUndo' : '#iCheck');
-  $('goText').textContent = isDone ? `${DAYS[sel]}요일 출석 취소` : what() ? `${DAYS[sel]}요일 출석` : '한 운동을 적어 주세요';
-  $('goGain').textContent = isDone ? `−${done.get(sel).exp} EXP` : what() ? `+${expNow()} EXP` : '';
+  const d = done.get(sel);
+  $('goText').textContent = isDone ? `${DAYS[sel]}요일 ${d.rest ? '휴식' : '출석'} 취소` : !what() ? '한 운동을 적어 주세요' : `${DAYS[sel]}요일 ${isRest() ? '휴식 기록' : '출석'}`;
+  $('goGain').textContent = isDone ? (d.rest ? '' : `−${d.exp} EXP`) : !what() ? '' : isRest() ? '쉬는 날' : `+${expNow()} EXP`;
+  $('goGain').classList.toggle('soft', !isDone && isRest());
 }
 
 function burst(){
@@ -819,21 +831,23 @@ $('go').addEventListener('click', () => {
   const before = levelOf(totalExp());
   if (done.has(sel)){
     const d = done.get(sel); done.delete(sel); render();
-    toast(`${DAYS[sel]}요일 출석을 취소했어요 (−${d.exp} EXP)`);
+    toast(d.rest ? `${DAYS[sel]}요일 휴식 기록을 지웠어요` : `${DAYS[sel]}요일 출석을 취소했어요 (−${d.exp} EXP)`);
     return;
   }
   if (!what()) return;
   const exp = expNow();
-  done.set(sel, {what: what(), min: pick.min, exp});
+  const rest = isRest();
+  done.set(sel, {what: what(), min: rest ? 0 : pick.min, exp, rest});
   const day = dayEls[sel];
   // 다음 출석 안 한 날로 선택을 옮겨 연달아 기록하기 쉽게
   const nextDay = dayEls.findIndex((_, i) => i > sel && !done.has(i));
   if (nextDay > -1) sel = nextDay;
   render();
   const after = levelOf(totalExp());
-  toast(after > before ? LV[after].msg : `+${exp} EXP · ${LV[after + 1] ? `다음 레벨까지 ${LV[after + 1].need - totalExp()}` : '최고 레벨이에요'}`);
+  toast(rest ? '쉬는 날도 기록 완료! 회복도 운동의 일부예요' : after > before ? LV[after].msg : `+${exp} EXP · ${LV[after + 1] ? `다음 레벨까지 ${LV[after + 1].need - totalExp()}` : '최고 레벨이에요'}`);
   if (reduce) return;
   day.classList.remove('pop'); void day.offsetWidth; day.classList.add('pop');
+  if (rest) return;
   $('gain').textContent = `+${exp}`;
   $('gain').animate([{opacity:0, transform:'translateY(10px) scale(.9)'},{opacity:1, transform:'none', offset:.2},{opacity:0, transform:'translateY(-40px)'}], {duration:1100, easing:EASE});
   gm.querySelector('img').animate([{transform:'none'},{transform:'translateY(-28px) scale(1.04,.96)'},{transform:'scale(.97,1.03)'},{transform:'none'}], {duration:560, easing:EASE});
