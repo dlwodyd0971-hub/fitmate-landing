@@ -242,6 +242,9 @@ h3{font-size:19px;letter-spacing:-.02em;font-weight:700}
 .lvname small{display:block;font-size:13px;font-weight:700;color:var(--purple-2);font-variant-numeric:tabular-nums}
 .lvname strong{display:block;font-size:24px;font-weight:800;letter-spacing:-.03em}
 .goal{background:var(--paper);border-radius:999px;padding:7px 13px;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.pills{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.goal.streak{background:var(--ink);color:#fff;font-size:13px}
+.goal.streak.broken{background:#E59C93;color:var(--ink)}
 .lvup{position:absolute;left:50%;top:22%;translate:-50% 0;background:var(--purple);color:#fff;font-weight:800;font-size:15px;padding:8px 16px;border-radius:999px;opacity:0;pointer-events:none;z-index:2;box-shadow:0 10px 24px -10px rgba(91,55,181,.7)}
 .spark{position:absolute;width:10px;height:10px;border-radius:3px;left:50%;top:50%;pointer-events:none}
 .ctrl{background:var(--paper);border-radius:30px;padding:28px;display:flex;flex-direction:column;gap:22px}
@@ -527,7 +530,7 @@ footer p{max-width:46em}
         <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="bg" cx="50" cy="50" r="47"/><circle class="fg" id="ring" cx="50" cy="50" r="47" stroke-dasharray="295.3" stroke-dashoffset="295.3"/></svg>
         <div class="stage-top">
           <div class="lvname" aria-live="polite"><small id="lvNum">Lv.1</small><strong id="lvName">아기 모모</strong></div>
-          <span class="goal" id="goal">주간 목표 0/4</span>
+          <div class="pills"><span class="goal" id="goal">주간 목표 0/4</span><span class="goal streak" id="streak">연속 출석 0회 · 휴식 0/2</span></div>
         </div>
         <span class="lvup" id="lvup" aria-hidden="true">레벨 업!</span>
         <span class="gain" id="gain" aria-hidden="true"></span>
@@ -587,7 +590,7 @@ footer p{max-width:46em}
         <button class="reset" id="reset" type="button">처음부터 다시 키우기</button>
       </div>
     </div>
-    <p class="demo-note">체험용 예시예요. 경험치는 ‘출석 10 + 운동 시간(분) × 강도(가볍게 1, 적당히 1.5, 땀 흠뻑 2)’로 계산해요. 휴식한 날은 기록만 남고 출석 횟수와 경험치에는 들어가지 않아요. 실제 규칙은 사용자 테스트를 거쳐 정해요.</p>
+    <p class="demo-note">체험용 예시예요. 경험치는 ‘출석 10 + 운동 시간(분) × 강도(가볍게 1, 적당히 1.5, 땀 흠뻑 2)’로 계산해요. 휴식은 출석 횟수와 경험치에는 들어가지 않지만, 주 2회까지는 연속 출석이 끊기지 않아요. 기록 없이 비운 날이 있거나 세 번째 휴식부터는 연속이 끊겨요. 실제 규칙은 사용자 테스트를 거쳐 정해요.</p>
   </div>
 </section>
 
@@ -768,6 +771,20 @@ const what = () => pick.sport || custom.value.trim();
 const isRest = () => pick.sport === '휴식';
 const expNow = () => isRest() ? 0 : Math.round(10 + pick.min * pick.pow);
 const attended = () => [...done.values()].filter(d => !d.rest).length;   // 휴식은 출석 횟수에서 빠짐
+const REST_FREE = 2;                          // 주 2회까지 휴식은 연속 출석을 지켜 줌
+const restCount = () => [...done.values()].filter(d => d.rest).length;
+// 월요일부터 마지막 기록일까지 훑으며 연속 출석을 셈: 빈 날이나 3번째 휴식이면 끊김
+function streakOf(){
+  const last = Math.max(-1, ...done.keys());
+  let streak = 0, rests = 0, broken = false;
+  for (let i = 0; i <= last; i++){
+    const d = done.get(i);
+    if (!d){ streak = 0; broken = true; continue; }
+    if (d.rest){ if (++rests > REST_FREE){ streak = 0; broken = true; } continue; }
+    streak++; broken = false;
+  }
+  return {streak, broken};
+}
 
 function radio(groupId, key, cast){
   $(groupId).addEventListener('click', e => {
@@ -790,7 +807,9 @@ function render(){
   const exp = totalExp(), n = levelOf(exp), lv = LV[n], next = LV[n + 1];
   gm.style.setProperty('--s', lv.s);
   $('lvNum').textContent = `Lv.${n + 1}`; $('lvName').textContent = lv.name;
-  const att = attended();
+  const att = attended(), {streak, broken} = streakOf();
+  $('streak').textContent = `연속 출석 ${streak}회 · 휴식 ${Math.min(restCount(), REST_FREE)}/${REST_FREE}`;
+  $('streak').classList.toggle('broken', broken && done.size > 0);
   $('goal').textContent = att >= GOAL ? `주간 목표 달성 · ${att}회` : `주간 목표 ${att}/${GOAL}`;
   $('ring').style.strokeDashoffset = RING * (1 - Math.min(att, GOAL) / GOAL);
   $('xpTxt').textContent = next ? `${exp} / ${next.need}` : `${exp} · MAX`;
@@ -812,7 +831,7 @@ function render(){
   $('goIcon').setAttribute('href', isDone ? '#iUndo' : '#iCheck');
   const d = done.get(sel);
   $('goText').textContent = isDone ? `${DAYS[sel]}요일 ${d.rest ? '휴식' : '출석'} 취소` : !what() ? '한 운동을 적어 주세요' : `${DAYS[sel]}요일 ${isRest() ? '휴식 기록' : '출석'}`;
-  $('goGain').textContent = isDone ? (d.rest ? '' : `−${d.exp} EXP`) : !what() ? '' : isRest() ? '쉬는 날' : `+${expNow()} EXP`;
+  $('goGain').textContent = isDone ? (d.rest ? '' : `−${d.exp} EXP`) : !what() ? '' : isRest() ? (restCount() < REST_FREE ? `연속 유지 · 남은 휴식 ${REST_FREE - restCount()}회` : '연속이 끊겨요') : `+${expNow()} EXP`;
   $('goGain').classList.toggle('soft', !isDone && isRest());
 }
 
@@ -844,7 +863,7 @@ $('go').addEventListener('click', () => {
   if (nextDay > -1) sel = nextDay;
   render();
   const after = levelOf(totalExp());
-  toast(rest ? '쉬는 날도 기록 완료! 회복도 운동의 일부예요' : after > before ? LV[after].msg : `+${exp} EXP · ${LV[after + 1] ? `다음 레벨까지 ${LV[after + 1].need - totalExp()}` : '최고 레벨이에요'}`);
+  toast(rest ? (restCount() <= REST_FREE ? `휴식 기록 완료! 연속 출석은 그대로예요 (남은 휴식 ${REST_FREE - restCount()}회)` : '이번 주 세 번째 휴식이라 연속 출석이 끊겼어요') : after > before ? LV[after].msg : `+${exp} EXP · ${LV[after + 1] ? `다음 레벨까지 ${LV[after + 1].need - totalExp()}` : '최고 레벨이에요'}`);
   if (reduce) return;
   day.classList.remove('pop'); void day.offsetWidth; day.classList.add('pop');
   if (rest) return;
