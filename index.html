@@ -249,15 +249,29 @@ h3{font-size:19px;letter-spacing:-.02em;font-weight:700}
 .chip{padding:9px 15px;border-radius:999px;font-size:15px;font-weight:600;background:var(--mute);min-height:44px;transition:background-color 180ms ease,color 180ms ease,transform 160ms var(--ease-out)}
 .chip:active{transform:scale(.97)}
 .chip[aria-checked="true"]{background:var(--ink);color:#fff}
+.ctrl h3 span{font-weight:500;margin-left:6px}
 .go{width:100%;justify-content:space-between;font-size:17px}
-.go[disabled]{background:var(--purple);cursor:default}
-.go[disabled] .arr{background:#fff;color:var(--purple)}
+.go .gain-pre{font-weight:800;color:var(--lime-2);margin-left:8px;font-variant-numeric:tabular-nums}
+.go[disabled]{opacity:.45;cursor:default}
 .go[disabled]:active{transform:none}
-.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;list-style:none}
-.week li{border-radius:14px;background:var(--mute);padding:9px 0;text-align:center;font-size:13px;font-weight:600;color:var(--ink-2);min-height:62px;transition:background-color 300ms ease}
-.week li em{display:block;font-style:normal;font-size:11px;margin-top:3px;font-weight:700;line-height:1.3}
-.week li.done{background:var(--lime-2);color:var(--ink);animation:pop 460ms var(--ease-spring)}
-.week li.rest em{color:#8A9073}
+.go.undo{background:var(--paper);color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.go.undo .arr{background:var(--mute);color:var(--ink)}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding-top:6px}
+.day{position:relative;border-radius:14px;background:var(--mute);padding:7px 2px 8px;font-size:12px;font-weight:600;color:var(--ink-2);min-height:70px;display:flex;flex-direction:column;align-items:center;gap:1px;transition:background-color 220ms ease,box-shadow 220ms ease,transform 160ms var(--ease-out)}
+.day:active{transform:scale(.95)}
+.day b{font-size:17px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.25}
+.day em{font-style:normal;font-size:11px;font-weight:700;line-height:1.3;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 3px}
+.day.today::after{content:"오늘";position:absolute;top:-8px;left:50%;translate:-50% 0;font-size:10px;font-weight:800;background:var(--purple);color:#fff;padding:1px 6px;border-radius:999px;line-height:1.5}
+.day[aria-checked="true"]{background:var(--paper);box-shadow:0 0 0 2px var(--ink)}
+.day.done{background:var(--lime-2);color:var(--ink)}
+.day.pop{animation:pop 460ms var(--ease-spring)}
+.custom{margin-top:10px;width:100%;min-height:46px;border-radius:14px;border:0;background:var(--mute);padding:0 14px;font:inherit;font-size:16px;color:var(--ink);transition:box-shadow 180ms ease}
+.custom:focus{outline:none;box-shadow:inset 0 0 0 1.5px var(--purple)}
+.custom[hidden]{display:none}
+.xp{position:absolute;left:22px;right:22px;bottom:20px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;z-index:1}
+.xp .bar{flex:1;height:10px;background:rgba(28,35,16,.08)}
+.xp .bar i{background:var(--purple);transform:scaleX(0);transition:transform 700ms var(--ease-out)}
+.gain{position:absolute;left:50%;top:40%;translate:-50% 0;font-size:22px;font-weight:800;color:var(--purple-2);opacity:0;pointer-events:none;z-index:2;font-variant-numeric:tabular-nums;text-shadow:0 2px 0 #fff}
 .unlocks{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .unlocks li{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:16px;background:#F7F8F1;font-size:14px;font-weight:700;min-height:54px;color:var(--ink-2);transition:background-color 300ms ease,color 300ms ease}
 .unlocks li .ic{width:34px;height:34px;flex:none;display:grid;place-items:center;border-radius:11px;background:#ECEEE1;transition:background-color 300ms ease}
@@ -342,6 +356,7 @@ footer p{max-width:46em}
   <symbol id="iMedal" viewBox="0 0 40 54"><path d="M9 0h9l6 18h-9z" fill="url(#gRib)"/><path d="M31 0h-9l-6 18h9z" fill="#6A47C8"/><circle cx="20" cy="35" r="15" fill="url(#gMedal)"/><circle cx="20" cy="35" r="10.5" fill="none" stroke="#C4860F" stroke-opacity=".45" stroke-width="1.5"/><path d="m20 28 2.2 4.5 5 .7-3.6 3.5.9 4.9L20 39.3l-4.5 2.3.9-4.9-3.6-3.5 5-.7z" fill="#FFF4C4"/><ellipse cx="13.5" cy="28" rx="4" ry="2.4" fill="#fff" opacity=".55" transform="rotate(-35 13.5 28)"/></symbol>
   <symbol id="iDrop" viewBox="0 0 20 28"><path d="M10 1C6 9 2 13 2 18a8 8 0 0 0 16 0c0-5-4-9-8-17z" fill="url(#gDrop)" stroke="#78BDE0" stroke-width="1"/><ellipse cx="7" cy="17" rx="2" ry="3.2" fill="#fff" opacity=".8"/></symbol>
   <symbol id="iArr" viewBox="0 0 16 16"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="iUndo" viewBox="0 0 16 16"><path d="M2.5 8a5.5 5.5 0 1 0 1.6-3.9M2.5 2.5v3h3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="iCheck" viewBox="0 0 16 16"><path d="m3.5 8.5 3 3 6-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </defs></svg>
 
@@ -497,9 +512,9 @@ footer p{max-width:46em}
     <div class="head">
       <div>
         <span class="kicker rv">이렇게 달라져요</span>
-        <h2 class="rv" style="--d:1">일주일에 네 번 출석하면,<br>모모가 이만큼 자라요</h2>
+        <h2 class="rv" style="--d:1">한 만큼 쌓이고,<br>모모가 이만큼 자라요</h2>
       </div>
-      <p class="lead rv" style="--d:2">운동을 고르고 출석 버튼을 눌러 보세요. 출석할 때마다 레벨이 오르고 아이템이 열려요.</p>
+      <p class="lead rv" style="--d:2">이번 주 날짜를 고르고, 한 운동과 시간, 강도를 골라 출석해 보세요. 10분도 출석은 똑같이 1회, 오래·힘들게 할수록 경험치가 더 쌓여요.</p>
     </div>
 
     <div class="grow rv">
@@ -510,6 +525,8 @@ footer p{max-width:46em}
           <span class="goal" id="goal">주간 목표 0/4</span>
         </div>
         <span class="lvup" id="lvup" aria-hidden="true">레벨 업!</span>
+        <span class="gain" id="gain" aria-hidden="true"></span>
+        <div class="xp"><span>EXP</span><div class="bar"><i id="xpBar"></i></div><span id="xpTxt">0 / 40</span></div>
         <div class="g-momo" id="gMomo">
           <img src="assets/momo.png" alt="키우기 체험 중인 모모" width="900" height="900" loading="lazy">
           <svg class="acc sweat" aria-hidden="true"><use href="#iDrop"/></svg>
@@ -520,19 +537,38 @@ footer p{max-width:46em}
 
       <div class="ctrl">
         <div>
-          <h3 id="sportLabel">오늘 한 운동</h3>
+          <h3 id="dayLabel">날짜<span id="weekRange"></span></h3>
+          <div class="week" id="week" role="radiogroup" aria-labelledby="dayLabel"></div>
+        </div>
+        <div>
+          <h3 id="sportLabel">무슨 운동 했어요?</h3>
           <div class="chips" role="radiogroup" aria-labelledby="sportLabel" id="sports">
-            <button class="chip" type="button" role="radio" aria-checked="true" data-s="홈트">홈트 10분</button>
-            <button class="chip" type="button" role="radio" aria-checked="false" data-s="스트레칭">스트레칭 10분</button>
-            <button class="chip" type="button" role="radio" aria-checked="false" data-s="러닝">러닝 20분</button>
-            <button class="chip" type="button" role="radio" aria-checked="false" data-s="계단">계단 오르기</button>
+            <button class="chip" type="button" role="radio" aria-checked="true" data-v="홈트">홈트</button>
+            <button class="chip" type="button" role="radio" aria-checked="false" data-v="스트레칭">스트레칭</button>
+            <button class="chip" type="button" role="radio" aria-checked="false" data-v="러닝">러닝</button>
+            <button class="chip" type="button" role="radio" aria-checked="false" data-v="계단">계단 오르기</button>
+            <button class="chip" type="button" role="radio" aria-checked="false" data-v="">직접 적기</button>
+          </div>
+          <input class="custom" id="custom" type="text" maxlength="12" placeholder="예: 필라테스, 배드민턴" aria-label="한 운동 직접 적기" hidden>
+        </div>
+        <div>
+          <h3 id="timeLabel">얼마나 했어요?</h3>
+          <div class="chips" role="radiogroup" aria-labelledby="timeLabel" id="times">
+            <button class="chip" type="button" role="radio" aria-checked="true" data-v="10">10분</button>
+            <button class="chip" type="button" role="radio" aria-checked="false" data-v="20">20분</button>
+            <button class="chip" type="button" role="radio" aria-checked="false" data-v="30">30분</button>
+            <button class="chip" type="button" role="radio" aria-checked="false" data-v="60">1시간</button>
           </div>
         </div>
-        <button class="btn btn-ink go" id="go" type="button"><span id="goText">월요일 출석하기</span><span class="arr" aria-hidden="true"><svg><use href="#iCheck"/></svg></span></button>
         <div>
-          <h3>이번 주 기록</h3>
-          <ol class="week" id="week"><li>월<em></em></li><li>화<em></em></li><li>수<em></em></li><li>목<em></em></li><li>금<em></em></li><li>토<em></em></li><li>일<em></em></li></ol>
+          <h3 id="powLabel">강도는요?</h3>
+          <div class="chips" role="radiogroup" aria-labelledby="powLabel" id="pows">
+            <button class="chip" type="button" role="radio" aria-checked="true" data-v="1">가볍게</button>
+            <button class="chip" type="button" role="radio" aria-checked="false" data-v="1.5">적당히</button>
+            <button class="chip" type="button" role="radio" aria-checked="false" data-v="2">땀 흠뻑</button>
+          </div>
         </div>
+        <button class="btn btn-ink go" id="go" type="button"><span><span id="goText">출석하기</span><span class="gain-pre" id="goGain"></span></span><span class="arr" aria-hidden="true"><svg><use id="goIcon" href="#iCheck"/></svg></span></button>
         <div>
           <h3>레벨이 오르면 열려요</h3>
           <ul class="unlocks" id="unlocks">
@@ -545,7 +581,7 @@ footer p{max-width:46em}
         <button class="reset" id="reset" type="button">처음부터 다시 키우기</button>
       </div>
     </div>
-    <p class="demo-note">체험용 예시예요. 실제 레벨 규칙과 아이템은 사용자 테스트를 거쳐 정해요.</p>
+    <p class="demo-note">체험용 예시예요. 경험치는 ‘출석 10 + 운동 시간(분) × 강도(가볍게 1, 적당히 1.5, 땀 흠뻑 2)’로 계산해요. 실제 규칙은 사용자 테스트를 거쳐 정해요.</p>
   </div>
 </section>
 
@@ -695,38 +731,74 @@ function playBefore(){
 }
 $('replay').addEventListener('click', playBefore);
 
-/* 6. 키우기 체험: 출석 한 번에 레벨 하나, 네 번이면 주간 목표 달성 */
+/* 6. 키우기 체험
+   - 출석: 10분만 해도 1회. 주간 목표(4회)는 출석 횟수로 셈
+   - 경험치: 출석 10 + 시간(분) × 강도 배율. 레벨과 아이템은 경험치로 오름 */
 const LV = [
-  {name:'아기 모모', s:.62},
-  {name:'꼬마 모모', s:.74, acc:'sweat', msg:'Lv.2! 땀방울이 생겼어요'},
-  {name:'운동하는 모모', s:.84, acc:'medal', msg:'Lv.3! 금메달을 받았어요'},
-  {name:'근육 모모', s:.94, msg:'Lv.4! 라벤더 컬러가 열렸어요'},
-  {name:'레전드 모모', s:1.02, acc:'crown', msg:'Lv.5! 이번 주 목표 달성, 왕관을 썼어요'},
+  {name:'아기 모모', s:.62, need:0},
+  {name:'꼬마 모모', s:.74, need:40, acc:'sweat', msg:'Lv.2! 땀방울이 생겼어요'},
+  {name:'운동하는 모모', s:.84, need:100, acc:'medal', msg:'Lv.3! 금메달을 받았어요'},
+  {name:'근육 모모', s:.94, need:180, msg:'Lv.4! 라벤더 컬러가 열렸어요'},
+  {name:'레전드 모모', s:1.02, need:280, acc:'crown', msg:'Lv.5! 왕관을 썼어요'},
 ];
-const PLAN = [0, 2, 3, 5]; // 월 수 목 토에 출석, 사이사이는 쉬는 날
-const DAY = ['월요일','화요일','수요일','목요일','금요일','토요일','일요일'];
-const RING = 295.3;
-let n = 0, sport = '홈트';
-const gm = $('gMomo'), weekEls = [...$('week').children], unlockEls = [...$('unlocks').children];
+const DAYS = ['월','화','수','목','금','토','일'];
+const RING = 295.3, GOAL = 4;
+const gm = $('gMomo'), custom = $('custom'), unlockEls = [...$('unlocks').children];
+const done = new Map();                      // 요일 번호 → {what, min, exp}
+const pick = {sport:'홈트', min:10, pow:1};
 
-$('sports').addEventListener('click', e => {
-  const b = e.target.closest('.chip'); if (!b) return;
-  $('sports').querySelectorAll('.chip').forEach(c => c.setAttribute('aria-checked', c === b));
-  sport = b.dataset.s;
-});
+// 이번 주 월요일~일요일 실제 날짜
+const now = new Date(), todayIdx = (now.getDay() + 6) % 7;
+const dates = DAYS.map((_, i) => new Date(now.getFullYear(), now.getMonth(), now.getDate() - todayIdx + i));
+const md = d => `${d.getMonth() + 1}월 ${d.getDate()}일`;
+$('weekRange').textContent = `${md(dates[0])} – ${md(dates[6])}`;
+$('week').innerHTML = dates.map((d, i) => `<button class="day${i === todayIdx ? ' today' : ''}" type="button" role="radio" aria-checked="false" data-i="${i}" aria-label="${DAYS[i]}요일 ${md(d)}"><span>${DAYS[i]}</span><b>${d.getDate()}</b><em></em></button>`).join('');
+const dayEls = [...$('week').children];
+let sel = todayIdx;
+
+const totalExp = () => [...done.values()].reduce((a, d) => a + d.exp, 0);
+const levelOf = exp => LV.reduce((lv, l, i) => exp >= l.need ? i : lv, 0);
+const what = () => pick.sport || custom.value.trim();
+const expNow = () => Math.round(10 + pick.min * pick.pow);
+
+function radio(groupId, key, cast){
+  $(groupId).addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    $(groupId).querySelectorAll('.chip').forEach(c => c.setAttribute('aria-checked', c === b));
+    pick[key] = cast(b.dataset.v);
+    if (key === 'sport'){ custom.hidden = pick.sport !== ''; if (!custom.hidden) custom.focus(); }
+    render();
+  });
+}
+radio('sports', 'sport', String); radio('times', 'min', Number); radio('pows', 'pow', Number);
+custom.addEventListener('input', render);
+custom.addEventListener('keydown', e => { if (e.key === 'Enter' && !$('go').disabled) $('go').click(); });
+$('week').addEventListener('click', e => { const b = e.target.closest('.day'); if (!b) return; sel = +b.dataset.i; render(); });
 
 function render(){
-  const lv = LV[n];
+  const exp = totalExp(), n = levelOf(exp), lv = LV[n], next = LV[n + 1];
   gm.style.setProperty('--s', lv.s);
   $('lvNum').textContent = `Lv.${n + 1}`; $('lvName').textContent = lv.name;
-  $('goal').textContent = `주간 목표 ${n}/4`;
-  $('ring').style.strokeDashoffset = RING * (1 - n / 4);
+  $('goal').textContent = done.size >= GOAL ? `주간 목표 달성 · ${done.size}회` : `주간 목표 ${done.size}/${GOAL}`;
+  $('ring').style.strokeDashoffset = RING * (1 - Math.min(done.size, GOAL) / GOAL);
+  $('xpTxt').textContent = next ? `${exp} / ${next.need}` : `${exp} · MAX`;
+  $('xpBar').style.transform = `scaleX(${next ? (exp - lv.need) / (next.need - lv.need) : 1})`;
   const owned = LV.slice(1, n + 1).map(l => l.acc).filter(Boolean);
   gm.querySelectorAll('.acc').forEach(a => a.classList.toggle('show', owned.some(c => a.classList.contains(c))));
   unlockEls.forEach(u => u.classList.toggle('got', n + 1 >= +u.dataset.lv));
+  if (n < 3 && gm.classList.contains('lav')) $('lavBtn').click();
   $('stage').classList.toggle('lv5', n === 4);
-  $('go').disabled = n === 4;
-  $('goText').textContent = n === 4 ? '이번 주 목표 달성!' : `${DAY[PLAN[n]]} 출석하기`;
+  dayEls.forEach((d, i) => {
+    d.setAttribute('aria-checked', i === sel);
+    d.classList.toggle('done', done.has(i));
+    d.querySelector('em').textContent = done.get(i)?.what || '';
+  });
+  const isDone = done.has(sel), go = $('go');
+  go.classList.toggle('undo', isDone);
+  go.disabled = !isDone && !what();
+  $('goIcon').setAttribute('href', isDone ? '#iUndo' : '#iCheck');
+  $('goText').textContent = isDone ? `${DAYS[sel]}요일 출석 취소` : what() ? `${DAYS[sel]}요일 출석` : '한 운동을 적어 주세요';
+  $('goGain').textContent = isDone ? `−${done.get(sel).exp} EXP` : what() ? `+${expNow()} EXP` : '';
 }
 
 function burst(){
@@ -741,16 +813,32 @@ function burst(){
 }
 
 $('go').addEventListener('click', () => {
-  if (n >= 4) return;
-  // 출석일 사이 지나간 날은 쉬는 날로 표시
-  for (let i = n ? PLAN[n-1] + 1 : 0; i < PLAN[n]; i++){ weekEls[i].classList.add('rest'); weekEls[i].querySelector('em').textContent = '쉼'; }
-  const day = weekEls[PLAN[n]];
-  day.classList.add('done'); day.querySelector('em').textContent = sport;
-  n++; render(); burst(); toast(LV[n].msg);
+  const before = levelOf(totalExp());
+  if (done.has(sel)){
+    const d = done.get(sel); done.delete(sel); render();
+    toast(`${DAYS[sel]}요일 출석을 취소했어요 (−${d.exp} EXP)`);
+    return;
+  }
+  if (!what()) return;
+  const exp = expNow();
+  done.set(sel, {what: what(), min: pick.min, exp});
+  const day = dayEls[sel];
+  // 다음 출석 안 한 날로 선택을 옮겨 연달아 기록하기 쉽게
+  const nextDay = dayEls.findIndex((_, i) => i > sel && !done.has(i));
+  if (nextDay > -1) sel = nextDay;
+  render();
+  const after = levelOf(totalExp());
+  toast(after > before ? LV[after].msg : `+${exp} EXP · ${LV[after + 1] ? `다음 레벨까지 ${LV[after + 1].need - totalExp()}` : '최고 레벨이에요'}`);
   if (reduce) return;
+  day.classList.remove('pop'); void day.offsetWidth; day.classList.add('pop');
+  $('gain').textContent = `+${exp}`;
+  $('gain').animate([{opacity:0, transform:'translateY(10px) scale(.9)'},{opacity:1, transform:'none', offset:.2},{opacity:0, transform:'translateY(-40px)'}], {duration:1100, easing:EASE});
   gm.querySelector('img').animate([{transform:'none'},{transform:'translateY(-28px) scale(1.04,.96)'},{transform:'scale(.97,1.03)'},{transform:'none'}], {duration:560, easing:EASE});
-  $('lvup').animate([{opacity:0, transform:'translateY(10px) scale(.9)'},{opacity:1, transform:'none', offset:.25},{opacity:1, transform:'none', offset:.75},{opacity:0, transform:'translateY(-8px)'}], {duration:1300, easing:EASE});
-  $('lvNum').animate([{transform:'translateY(8px)', opacity:0},{transform:'none', opacity:1}], {duration:320, easing:EASE});
+  if (after > before){
+    burst();
+    $('lvup').animate([{opacity:0, transform:'translateY(10px) scale(.9)'},{opacity:1, transform:'none', offset:.25},{opacity:1, transform:'none', offset:.75},{opacity:0, transform:'translateY(-8px)'}], {duration:1300, easing:EASE});
+    $('lvNum').animate([{transform:'translateY(8px)', opacity:0},{transform:'none', opacity:1}], {duration:320, easing:EASE});
+  }
 });
 
 $('lavBtn').addEventListener('click', e => {
@@ -760,9 +848,8 @@ $('lavBtn').addEventListener('click', e => {
 });
 
 $('reset').addEventListener('click', () => {
-  n = 0; gm.classList.remove('lav');
+  done.clear(); sel = todayIdx; gm.classList.remove('lav');
   $('lavBtn').setAttribute('aria-pressed', false); $('lavBtn').textContent = '입혀 보기';
-  weekEls.forEach(w => { w.className = ''; w.querySelector('em').textContent = ''; });
   render();
 });
 render();
