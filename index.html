@@ -131,8 +131,8 @@ h3{font-size:19px;letter-spacing:-.02em;font-weight:700}
 @media (hover:hover) and (pointer:fine){ .sw button:hover span img{transform:translateY(-3px) rotate(-4deg)} .sw button span img{transition:transform 260ms var(--ease-out)} }
 
 /* 스크롤 등장 */
-.js .rv{opacity:0;transform:translateY(18px);transition:opacity 700ms var(--ease-out),transform 700ms var(--ease-out);transition-delay:calc(var(--d,0) * 70ms)}
-.js .rv.on{opacity:1;transform:none}
+.js .rv{opacity:0;transform:translateY(18px);filter:blur(6px);transition:opacity 700ms var(--ease-out),transform 700ms var(--ease-out),filter 600ms var(--ease-out);transition-delay:calc(var(--d,0) * 70ms)}
+.js .rv.on{opacity:1;transform:none;filter:none}
 
 /* 2. 이런 적 있죠? */
 .chat-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:72px;align-items:center}
@@ -314,6 +314,22 @@ footer p{max-width:46em}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:999px;font-size:15px;font-weight:600;opacity:0;pointer-events:none;transition:opacity 200ms ease,transform 320ms var(--ease-out);z-index:25;max-width:calc(100% - 32px);text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
+/* 반응·부드러움 */
+body{-webkit-tap-highlight-color:transparent}
+.replay,.reset,.lav-toggle,.hero-cta .sub,.nav-links a,.momo-btn{transition:transform 160ms var(--ease-out),color 180ms ease,background-color 180ms ease}
+.nav-links a{display:inline-block}
+.replay:active,.reset:active,.lav-toggle:active,.hero-cta .sub:active,.nav-links a:active{transform:scale(.96)}
+.momo-btn:active{transform:scale(.98)}
+/* 시간·강도: 고른 칸으로 검은 알약이 미끄러져 감 */
+.chips.seg{position:relative;isolation:isolate}
+.chips.seg .chip{position:relative;z-index:1;transition:color 200ms ease,transform 160ms var(--ease-out)}
+.chips.seg .chip[aria-checked="true"]{background:transparent}
+.seg-ind{position:absolute;left:0;top:0;border-radius:999px;background:var(--ink);z-index:0;pointer-events:none;transition:transform 320ms var(--ease-out),width 320ms var(--ease-out)}
+/* 숨었다 나타나는 입력칸·옵션은 툭 튀지 않게 */
+.custom,.ctrl>div:has(>.chips){transition:opacity 220ms var(--ease-out),transform 260ms var(--ease-out)}
+@starting-style{.custom,.ctrl>div:has(>.chips){opacity:0;transform:translateY(-6px)}}
+.go>span:first-child{display:inline-block}
+
 @media (max-width:960px){
   .hero{padding-top:100px}
   :root{--panel:30px}
@@ -359,6 +375,8 @@ footer p{max-width:46em}
   *,*::before,*::after{animation:none!important;transition-duration:1ms!important;transition-delay:0ms!important}
   .js .rv,.js .msg,.js .pair .said,.js .pair .to,.js .pair .ans,.js .art,.js .ln>span{opacity:1;transform:none}
   .hl::after{transform:none}
+  html{scroll-behavior:auto}
+  .js .rv{filter:none}
 }
 </style>
 </head>
@@ -573,7 +591,7 @@ footer p{max-width:46em}
         </div>
         <div>
           <h3 id="timeLabel">얼마나 했어요?</h3>
-          <div class="chips" role="radiogroup" aria-labelledby="timeLabel" id="times">
+          <div class="chips seg" role="radiogroup" aria-labelledby="timeLabel" id="times">
             <button class="chip" type="button" role="radio" aria-checked="true" data-v="10">10분</button>
             <button class="chip" type="button" role="radio" aria-checked="false" data-v="20">20분</button>
             <button class="chip" type="button" role="radio" aria-checked="false" data-v="30">30분</button>
@@ -582,7 +600,7 @@ footer p{max-width:46em}
         </div>
         <div>
           <h3 id="powLabel">강도는요?</h3>
-          <div class="chips" role="radiogroup" aria-labelledby="powLabel" id="pows">
+          <div class="chips seg" role="radiogroup" aria-labelledby="powLabel" id="pows">
             <button class="chip" type="button" role="radio" aria-checked="true" data-v="1">가볍게</button>
             <button class="chip" type="button" role="radio" aria-checked="false" data-v="1.5">적당히</button>
             <button class="chip" type="button" role="radio" aria-checked="false" data-v="2">땀 흠뻑</button>
@@ -649,7 +667,7 @@ const io = new IntersectionObserver(es => es.forEach(e => {
   e.target.classList.add('on'); io.unobserve(e.target);
   onEnter[e.target.id]?.();
   e.target.querySelectorAll('[data-count]').forEach(countUp);
-}), {rootMargin:'0px 0px -14% 0px'});
+}), {rootMargin:'0px 0px -8% 0px'});
 document.querySelectorAll('.rv, #chat, #steps').forEach(el => io.observe(el));
 
 /* 내비: 아래로 내리면 숨고, 위로 올리면 다시 나옴 */
@@ -814,6 +832,40 @@ custom.addEventListener('input', render);
 custom.addEventListener('keydown', e => { if (e.key === 'Enter' && !$('go').disabled) $('go').click(); });
 $('week').addEventListener('click', e => { const b = e.target.closest('.day'); if (!b) return; sel = +b.dataset.i; render(); });
 
+
+/* 시간·강도 알약 표시: 처음엔 제자리에 두고, 이후엔 미끄러지게 */
+function placeSeg(g){
+  const on = g.querySelector('[aria-checked="true"]'); if (!on || !on.offsetWidth) return;
+  let ind = g.querySelector('.seg-ind');
+  if (!ind){ ind = document.createElement('i'); ind.className = 'seg-ind'; ind.style.transition = 'none'; g.prepend(ind); requestAnimationFrame(() => requestAnimationFrame(() => ind.style.transition = '')); }
+  ind.style.width = on.offsetWidth + 'px'; ind.style.height = on.offsetHeight + 'px';
+  ind.style.transform = `translate(${on.offsetLeft}px,${on.offsetTop}px)`;
+}
+const segs = document.querySelectorAll('.chips.seg');
+addEventListener('resize', () => segs.forEach(placeSeg), {passive:true});
+document.fonts?.ready.then(() => segs.forEach(placeSeg));   // 웹폰트가 늦게 오면 칸 너비가 바뀜
+
+/* 숫자는 바로 바꾸지 않고 굴려서: 경험치 표시 */
+let shownExp = 0, expRaf = 0;
+function rollExp(to, tail){
+  cancelAnimationFrame(expRaf);
+  const from = shownExp, t0 = performance.now(), dur = reduce ? 0 : 520;
+  (function f(t){ const k = dur ? Math.min(1, (t - t0) / dur) : 1;
+    shownExp = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+    $('xpTxt').textContent = tail(shownExp);
+    if (k < 1) expRaf = requestAnimationFrame(f); })(t0);
+}
+
+/* 버튼 문구가 바뀔 때는 살짝 흐렸다 또렷하게 */
+let lastLabel = '';
+function softSwap(el, label){
+  if (label === lastLabel) return; const first = !lastLabel; lastLabel = label;
+  if (!first && !reduce) el.animate([{filter:'blur(3px)', opacity:.35},{filter:'blur(0)', opacity:1}], {duration:220, easing:EASE});
+}
+
+/* 새로 열린 아이템은 한 번 톡 */
+let gotBefore = 0;
+
 function render(){
   const exp = totalExp(), n = levelOf(exp), lv = LV[n], next = LV[n + 1];
   gm.style.setProperty('--s', lv.s);
@@ -823,11 +875,16 @@ function render(){
   $('streak').classList.toggle('broken', broken && done.size > 0);
   $('goal').textContent = att >= GOAL ? `주간 목표 달성 · ${att}회` : `주간 목표 ${att}/${GOAL}`;
   $('ring').style.strokeDashoffset = RING * (1 - Math.min(att, GOAL) / GOAL);
-  $('xpTxt').textContent = next ? `${exp} / ${next.need}` : `${exp} · MAX`;
+  rollExp(exp, v => next ? `${v} / ${next.need}` : `${v} · MAX`);
   $('xpBar').style.transform = `scaleX(${next ? (exp - lv.need) / (next.need - lv.need) : 1})`;
   const owned = LV.slice(1, n + 1).map(l => l.acc).filter(Boolean);
   gm.querySelectorAll('.acc').forEach(a => a.classList.toggle('show', owned.some(c => a.classList.contains(c))));
-  unlockEls.forEach(u => u.classList.toggle('got', n + 1 >= +u.dataset.lv));
+  unlockEls.forEach(u => {
+    const got = n + 1 >= +u.dataset.lv;
+    if (got && !u.classList.contains('got') && n + 1 > gotBefore && !reduce) u.querySelector('.ic').animate([{transform:'scale(.6)'},{transform:'scale(1.12)', offset:.6},{transform:'none'}], {duration:520, easing:EASE});
+    u.classList.toggle('got', got);
+  });
+  gotBefore = n + 1;
   if (n < 3 && gm.classList.contains('lav')) $('lavBtn').click();
   $('stage').classList.toggle('lv5', n === 4);
   dayEls.forEach((d, i) => {
@@ -844,6 +901,8 @@ function render(){
   $('goText').textContent = isDone ? `${DAYS[sel]}요일 ${d.rest ? '휴식' : '출석'} 취소` : !what() ? '한 운동을 적어 주세요' : `${DAYS[sel]}요일 ${isRest() ? '휴식 기록' : '출석'}`;
   $('goGain').textContent = isDone ? (d.rest ? '' : `−${d.exp} EXP`) : !what() ? '' : isRest() ? (restCount() < REST_FREE ? `연속 유지 · 남은 휴식 ${REST_FREE - restCount()}회` : '연속이 끊겨요') : `+${expNow()} EXP`;
   $('goGain').classList.toggle('soft', !isDone && isRest());
+  softSwap(go.firstElementChild, $('goText').textContent + $('goGain').textContent);
+  segs.forEach(placeSeg);
 }
 
 function burst(){
