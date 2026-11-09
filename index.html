@@ -23,8 +23,8 @@
   --ease-out:cubic-bezier(.23,1,.32,1);
   --ease-drawer:cubic-bezier(.32,.72,0,1);
   --ease-spring:cubic-bezier(.34,1.56,.64,1);
-  --sec:clamp(52px,6.2vw,88px);
-  --gap:12px; --panel:36px;
+  --sec:clamp(64px,7vw,100px);
+  --gap:clamp(12px,1.6vw,24px); --panel:40px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -45,7 +45,7 @@ h2{font-size:clamp(28px,3.3vw,42px)}
 h3{font-size:19px;letter-spacing:-.02em;font-weight:700}
 .kicker{display:inline-block;font-size:14px;font-weight:700;color:var(--purple-2);background:var(--purple-soft);padding:6px 13px;border-radius:999px;margin-bottom:18px}
 .lead{font-size:clamp(16px,1.3vw,18px);color:var(--ink-2);max-width:32em}
-.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px 40px;margin-bottom:36px;flex-wrap:wrap}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px 40px;margin-bottom:52px;flex-wrap:wrap}
 .head .lead{max-width:23em}
 
 /* 버튼: 누르면 살짝 눌리고, 화살표 원이 안에서 움직임 */
@@ -75,7 +75,7 @@ h3{font-size:19px;letter-spacing:-.02em;font-weight:700}
 .nav .btn .arr{width:34px;height:34px}
 
 /* 1. 히어로 */
-.hero{padding:108px 0 48px}
+.hero{padding:124px 0 clamp(48px,5vw,72px)}
 .hero-grid{display:grid;grid-template-columns:1.12fr .88fr;gap:40px;align-items:center}
 .hero h1{font-size:clamp(36px,4.5vw,60px);line-height:1.14;letter-spacing:-.045em;margin-bottom:22px}
 .ln{display:block;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em}
@@ -118,7 +118,7 @@ h3{font-size:19px;letter-spacing:-.02em;font-weight:700}
 @keyframes artIn{to{opacity:1;transform:none}}
 
 /* 취향 고르기 띠 */
-.taste{display:flex;align-items:center;justify-content:space-between;gap:24px 40px;flex-wrap:wrap;margin-top:40px;padding:28px 0 0;border-top:1px solid var(--line)}
+.taste{display:flex;align-items:center;justify-content:space-between;gap:24px 40px;flex-wrap:wrap;margin-top:56px;padding:32px 0 0;border-top:1px solid var(--line)}
 .taste p{font-size:clamp(22px,2.4vw,30px);font-weight:800;letter-spacing:-.035em;line-height:1.3}
 .taste p em{font-style:normal;color:var(--purple)}
 .sw{display:flex;gap:10px}
@@ -135,7 +135,7 @@ h3{font-size:19px;letter-spacing:-.02em;font-weight:700}
 .js .rv.on{opacity:1;transform:none}
 
 /* 2. 이런 적 있죠? */
-.chat-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:56px;align-items:center}
+.chat-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:72px;align-items:center}
 .stat{margin-top:24px;padding-top:22px;border-top:1px solid var(--line);font-size:16px;color:var(--ink-2);max-width:29em}
 .stat b{color:var(--ink);font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .phone{padding:7px;border-radius:34px;background:rgba(28,35,16,.05);box-shadow:inset 0 0 0 1px var(--line)}
@@ -164,7 +164,7 @@ h3{font-size:19px;letter-spacing:-.02em;font-weight:700}
 /* 3. 이렇게 바꿔요 */
 .s-fix{background:var(--paper)}
 .pairs{list-style:none;border-top:1px solid var(--line)}
-.pair{display:grid;grid-template-columns:300px 40px minmax(0,1fr);align-items:center;gap:20px;padding:22px 0;border-bottom:1px solid var(--line)}
+.pair{display:grid;grid-template-columns:300px 40px minmax(0,1fr);align-items:center;gap:20px;padding:26px 0;border-bottom:1px solid var(--line)}
 .said{justify-self:start;background:var(--mute);color:var(--ink-2);padding:11px 17px;border-radius:20px 20px 20px 6px;font-size:clamp(17px,1.6vw,20px);font-weight:700;letter-spacing:-.02em;transition:background-color 500ms ease 500ms,color 500ms ease 500ms}
 .to{width:40px;height:40px;border-radius:50%;background:var(--lime);display:grid;place-items:center}
 .to svg{width:16px;height:16px}
@@ -178,7 +178,7 @@ h3{font-size:19px;letter-spacing:-.02em;font-weight:700}
 
 /* 4. 이용 방법 */
 #how{background:var(--mute)}
-.steps{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 .step{background:var(--paper);border-radius:28px;padding:8px 8px 24px;box-shadow:var(--ring)}
 .step .mini{height:136px;border-radius:22px;background:var(--bg);display:grid;place-items:center;margin-bottom:20px;overflow:hidden}
 .step .t,.step p{padding:0 16px}
@@ -209,7 +209,7 @@ h3{font-size:19px;letter-spacing:-.02em;font-weight:700}
 /* 5. 안 바꾸면 */
 .s-before{background:var(--night);color:#EEF0E6;box-shadow:none}
 .s-before .kicker{background:rgba(255,255,255,.08);color:#D9DCCD}
-.before-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.before-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
 .s-before .lead{color:#B9BEAA;margin-top:16px}
 .gray-panel{background:#2A3022;border-radius:28px;padding:26px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
 .gp-top{display:flex;align-items:center;gap:20px}
@@ -295,7 +295,7 @@ h3{font-size:19px;letter-spacing:-.02em;font-weight:700}
 .lav-toggle{margin-left:auto;font-size:13px;font-weight:700;color:var(--purple-2);padding:7px 10px;border-radius:999px;background:var(--paper);display:none;min-height:34px}
 .unlocks li.got .lav-toggle{display:inline-block}
 .reset{font-size:14px;font-weight:600;color:var(--ink-2);align-self:flex-start;padding:4px 0;border-bottom:1px solid rgba(28,35,16,.2)}
-.demo-note{margin-top:18px;font-size:14px;color:#3C4424}
+.demo-note{margin-top:24px;font-size:14px;color:#3C4424}
 
 /* 7. 신청 */
 .s-apply{background:var(--purple);color:#fff;overflow:hidden;box-shadow:none}
@@ -320,15 +320,15 @@ footer p{max-width:46em}
   .hero-grid,.chat-grid,.before-grid,.grow{grid-template-columns:1fr}
   .chat-grid,.before-grid{gap:40px}
   .art{max-width:420px}
-  .steps{grid-template-columns:1fr;gap:10px}
+  .steps{grid-template-columns:1fr;gap:14px}
   .step{display:grid;grid-template-columns:200px 1fr;gap:4px 4px;align-items:center;padding:8px}
   .step .mini{margin:0;grid-row:span 2;height:112px}
   .step .t{align-self:end}.step p{align-self:start}
   .stage{min-height:400px}
 }
 @media (max-width:640px){
-  .in{padding:0 18px}
-  :root{--gap:8px;--panel:26px}
+  .in{padding:0 20px}
+  :root{--gap:10px;--panel:28px}
   .nav-links{display:none}
   body{font-size:16px}
   .hero h1{font-size:clamp(32px,9.2vw,42px)}
@@ -338,7 +338,7 @@ footer p{max-width:46em}
   .sw button span img{width:46px;height:46px}
   .pair{grid-template-columns:1fr;gap:10px;padding:20px 0}
   .to{display:none}
-  .head{margin-bottom:32px}
+  .head{margin-bottom:36px}
   .week-card{padding:11px 13px 13px}
   .week-card strong{font-size:14px}
   .dots span{width:24px;height:34px;font-size:10px;border-radius:8px}
